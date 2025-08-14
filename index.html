@@ -7,34 +7,118 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body { margin:0; font-family:'Inter',sans-serif; background:#f5f5f5; color:#333; }
-header { position:fixed; top:0; left:0; right:0; height:70px; background:white; display:flex; justify-content:space-between; align-items:center; padding:0 30px; box-shadow:0 2px 10px rgba(0,0,0,0.08); z-index:100; border-bottom-left-radius:10px; border-bottom-right-radius:10px;}
+body {
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#000;
+  color:#fff;
+}
+header {
+  position:fixed;
+  top:0; left:0; right:0;
+  height:70px;
+  background:#111;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 30px;
+  box-shadow:0 2px 10px rgba(255,255,255,0.1);
+  z-index:100;
+}
 header h1 { margin:0; font-size:1.7em; font-weight:600; }
-header .auth-buttons button { margin-left:10px; padding:8px 16px; border:none; border-radius:25px; cursor:pointer; font-weight:600; background:#667eea; color:white; transition:0.3s; }
-header .auth-buttons button:hover{ transform:scale(1.05); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
-header .auth-buttons button.google{ background:#DB4437; }
-#main { margin-top:90px; padding:20px; max-width:1000px; margin-left:auto; margin-right:auto; }
-#drop-area { width:100%; min-height:160px; border:2px dashed #bbb; border-radius:12px; display:flex; justify-content:center; align-items:center; color:#666; font-size:1.2em; background:white; cursor:pointer; margin-bottom:15px; transition:0.3s; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
-#drop-area:hover { border-color:#667eea; box-shadow:0 8px 20px rgba(0,0,0,0.1); transform:translateY(-2px); }
-#info { margin-bottom:20px; font-size:0.95em; color:#333; }
-#gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:15px; }
+header .auth-buttons button {
+  margin-left:10px;
+  padding:8px 16px;
+  border:none; border-radius:25px;
+  cursor:pointer; font-weight:600;
+  background:#444; color:#fff;
+  transition:0.3s;
+}
+header .auth-buttons button:hover {
+  transform:scale(1.05);
+  box-shadow:0 4px 12px rgba(255,255,255,0.2);
+}
+header .auth-buttons button.google { background:#DB4437; }
+
+#main {
+  margin-top:90px;
+  padding:20px;
+  max-width:1000px;
+  margin-left:auto; margin-right:auto;
+}
+#drop-area {
+  width:100%; min-height:160px;
+  border:2px dashed #666;
+  border-radius:12px;
+  display:flex; justify-content:center; align-items:center;
+  font-size:1.2em;
+  background:#111;
+  cursor:pointer;
+  margin-bottom:15px;
+  transition:0.3s;
+}
+#drop-area:hover {
+  border-color:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,0.3);
+}
+#info { margin-bottom:20px; font-size:0.95em; color:#ccc; }
+#gallery {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:15px;
+}
 #gallery .photo-wrapper { position:relative; }
-#gallery img { width:100%; display:block; border-radius:12px; transition: transform 0.3s, box-shadow 0.3s; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
-#gallery img:hover { transform: scale(1.03); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
-.delete-btn { position:absolute; top:8px; right:8px; background:rgba(255,0,0,0.8); border:none; border-radius:50%; width:25px; height:25px; color:white; font-weight:bold; cursor:pointer; }
-#auth-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:200; }
-#auth-modal .modal-content { background:white; padding:30px; border-radius:16px; width:320px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
-#auth-modal h2{ margin-top:0; margin-bottom:20px; font-weight:600; }
-#auth-modal input{ width:100%; margin-bottom:12px; padding:10px; border:1px solid #ccc; border-radius:8px; font-size:1em; }
-#auth-modal button{ width:100%; padding:10px; border:none; border-radius:25px; background:#667eea; color:white; font-weight:600; cursor:pointer; transition:0.3s; }
-#auth-modal button:hover{ transform:scale(1.03); box-shadow:0 5px 15px rgba(0,0,0,0.2); }
-#auth-modal a{ font-size:0.9em; color:#667eea; text-decoration:none; display:block; margin-top:10px; }
-#modal-img { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:300; }
-#modal-img img { max-width:90%; max-height:90%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
+#gallery img {
+  width:100%;
+  display:block;
+  border-radius:12px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor:pointer;
+}
+#gallery img:hover {
+  transform: scale(1.03);
+  box-shadow:0 0 15px rgba(255,255,255,0.3);
+}
+.delete-btn {
+  position:absolute; top:8px; right:8px;
+  background:rgba(255,0,0,0.8);
+  border:none; border-radius:50%;
+  width:25px; height:25px; color:white;
+  font-weight:bold; cursor:pointer;
+}
+#auth-modal {
+  display:none;
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.8);
+  display:flex; justify-content:center; align-items:center;
+  z-index:200;
+}
+#auth-modal .modal-content {
+  background:#222; color:#fff;
+  padding:30px; border-radius:16px;
+  width:320px; text-align:center;
+}
+#auth-modal input {
+  width:100%; margin-bottom:12px; padding:10px;
+  border:1px solid #555; border-radius:8px;
+  background:#000; color:#fff;
+}
+#auth-modal button {
+  width:100%; padding:10px;
+  border:none; border-radius:25px;
+  background:#444; color:white;
+  font-weight:600; cursor:pointer;
+}
+#modal-img {
+  display:none;
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.9);
+  justify-content:center; align-items:center;
+  z-index:300; cursor:pointer;
+}
+#modal-img img {
+  max-width:90%; max-height:90%;
+  border-radius:12px;
+}
 </style>
 </head>
 <body>
@@ -51,7 +135,10 @@ header .auth-buttons button.google{ background:#DB4437; }
 <div id="main">
   <div id="drop-area">ここに画像をドラッグ＆ドロップ、またはクリック</div>
   <input type="file" id="fileElem" multiple style="display:none">
-  <div id="info">アップロード時間やストレージ使用量がここに表示されます</div>
+  <div id="info">
+    <div id="upload-info">アップロード時間がここに表示されます</div>
+    <div id="storage-info">総ストレージ使用量がここに表示されます</div>
+  </div>
   <div id="gallery"></div>
 </div>
 
@@ -61,7 +148,7 @@ header .auth-buttons button.google{ background:#DB4437; }
     <input type="email" id="email" placeholder="メール">
     <input type="password" id="password" placeholder="パスワード">
     <button id="auth-submit">送信</button>
-    <a href="#" onclick="closeAuth()">閉じる</a>
+    <a href="#" onclick="closeAuth()" style="color:#ccc;">閉じる</a>
   </div>
 </div>
 
@@ -77,38 +164,54 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Auth
-function showLogin(){ document.getElementById('auth-modal').style.display='flex'; document.getElementById('auth-title').innerText='ログイン'; document.getElementById('auth-submit').onclick=login; }
-function showSignup(){ document.getElementById('auth-modal').style.display='flex'; document.getElementById('auth-title').innerText='新規登録'; document.getElementById('auth-submit').onclick=signup; }
-function closeAuth(){ document.getElementById('auth-modal').style.display='none'; }
-function signup(){ 
-  const email = document.getElementById('email').value; 
-  const pw = document.getElementById('password').value; 
-  auth.createUserWithEmailAndPassword(email, pw).then(()=>{ alert('登録成功'); closeAuth(); }).catch(e=>alert(e.message));
-}
-function login(){ 
-  const email = document.getElementById('email').value; 
-  const pw = document.getElementById('password').value; 
-  auth.signInWithEmailAndPassword(email, pw).then(()=>{ alert('ログイン成功'); closeAuth(); }).catch(e=>alert(e.message));
-}
-function loginWithGoogle(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).then(r=>{ alert('Googleログイン成功: '+r.user.email); closeAuth(); }).catch(e=>alert('Googleログインエラー: '+e.message));
-}
-function logout(){ auth.signOut(); }
-
-// Cloudinary
-const cloudName = "dqud9tdr8";
-const uploadPreset = "annkomoti";
 const dropArea = document.getElementById('drop-area');
 const fileElem = document.getElementById('fileElem');
 const gallery = document.getElementById('gallery');
-const info = document.getElementById('info');
+const uploadInfo = document.getElementById('upload-info');
+const storageInfo = document.getElementById('storage-info');
+
+function showLogin(){
+  document.getElementById('auth-modal').style.display='flex';
+  document.getElementById('auth-title').innerText='ログイン';
+  document.getElementById('auth-submit').onclick=login;
+}
+function showSignup(){
+  document.getElementById('auth-modal').style.display='flex';
+  document.getElementById('auth-title').innerText='新規登録';
+  document.getElementById('auth-submit').onclick=signup;
+}
+function closeAuth(){
+  document.getElementById('auth-modal').style.display='none';
+}
+function signup(){
+  const email = document.getElementById('email').value;
+  const pw = document.getElementById('password').value;
+  auth.createUserWithEmailAndPassword(email, pw)
+    .then(()=>{ alert('登録成功'); closeAuth(); })
+    .catch(e=>alert(e.message));
+}
+function login(){
+  const email = document.getElementById('email').value;
+  const pw = document.getElementById('password').value;
+  auth.signInWithEmailAndPassword(email, pw)
+    .then(()=>{ alert('ログイン成功'); closeAuth(); })
+    .catch(e=>alert(e.message));
+}
+function loginWithGoogle(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then(r=>{ alert('Googleログイン成功: '+r.user.email); closeAuth(); })
+    .catch(e=>alert('Googleログインエラー: '+e.message));
+}
+function logout(){ auth.signOut(); }
+
+const cloudName = "dqud9tdr8";
+const uploadPreset = "annkomoti";
 
 dropArea.addEventListener('click',()=>fileElem.click());
-dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.style.borderColor='#667eea'; });
-dropArea.addEventListener('dragleave', e=>{ e.preventDefault(); dropArea.style.borderColor='#bbb'; });
-dropArea.addEventListener('drop', e=>{ e.preventDefault(); dropArea.style.borderColor='#bbb'; handleFiles(e.dataTransfer.files); });
+dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.style.borderColor='#fff'; });
+dropArea.addEventListener('dragleave', e=>{ e.preventDefault(); dropArea.style.borderColor='#666'; });
+dropArea.addEventListener('drop', e=>{ e.preventDefault(); dropArea.style.borderColor='#666'; handleFiles(e.dataTransfer.files); });
 fileElem.addEventListener('change', e=>handleFiles(e.target.files));
 
 async function handleFiles(files){
@@ -128,9 +231,9 @@ async function handleFiles(files){
       const data = await res.json();
       const end = performance.now();
       const uploadTime = ((end-start)/1000).toFixed(2);
-      info.innerText = `アップロード完了: ${file.name} (${uploadTime}秒)`;
-      
-      // Firestoreに保存
+
+      uploadInfo.innerText = `アップロード完了: ${file.name} (${uploadTime}秒)`;
+
       await db.collection('users').doc(user.uid).collection('photos').add({
         url: data.secure_url,
         size: file.size,
@@ -141,39 +244,45 @@ async function handleFiles(files){
   }
 }
 
-// ギャラリー表示
 async function displayGallery(){
   gallery.innerHTML = '';
   const user = auth.currentUser;
   if(!user) return;
   const snapshot = await db.collection('users').doc(user.uid).collection('photos').orderBy('createdAt','desc').get();
   let totalSize = 0;
+
   snapshot.forEach(doc=>{
     const data = doc.data();
-    totalSize += data.size || 0;
+    totalSize += data.size ? data.size : 0;
+
     const wrapper = document.createElement('div');
     wrapper.className = 'photo-wrapper';
+
     const img = document.createElement('img');
     img.src = data.url;
-    img.onclick = ()=>{ document.getElementById('modal-img-inner').src=data.url; document.getElementById('modal-img').style.display='flex'; };
+    img.onclick = ()=>{ 
+      document.getElementById('modal-img-inner').src = data.url; 
+      document.getElementById('modal-img').style.display='flex'; 
+    };
+
     const delBtn = document.createElement('button');
     delBtn.innerText='×';
     delBtn.className='delete-btn';
     delBtn.onclick = async (e)=>{
       e.stopPropagation();
       if(!confirm('本当に削除しますか？')) return;
-      // Firestore削除
       await db.collection('users').doc(user.uid).collection('photos').doc(doc.id).delete();
       displayGallery();
     };
+
     wrapper.appendChild(img);
     wrapper.appendChild(delBtn);
     gallery.appendChild(wrapper);
   });
-  info.innerText += ` | 総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
+
+  storageInfo.innerText = `総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
 }
 
-// ログイン状態管理
 auth.onAuthStateChanged(user=>{
   const authDiv = document.getElementById('auth-buttons');
   if(user){
@@ -182,7 +291,8 @@ auth.onAuthStateChanged(user=>{
   }else{
     authDiv.innerHTML = `<button onclick="showLogin()">ログイン</button><button onclick="showSignup()">新規登録</button><button class="google" onclick="loginWithGoogle()">Google</button>`;
     gallery.innerHTML = '';
-    info.innerText = 'アップロード時間やストレージ使用量がここに表示されます';
+    uploadInfo.innerText = 'アップロード時間がここに表示されます';
+    storageInfo.innerText = '総ストレージ使用量がここに表示されます';
   }
 });
 </script>
