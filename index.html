@@ -7,6 +7,7 @@
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -36,7 +37,7 @@
 
 <header>
   <h1>My Photos</h1>
-  <div class="auth-buttons">
+  <div class="auth-buttons" id="auth-buttons">
     <button onclick="showLogin()">ログイン</button>
     <button onclick="showSignup()">新規登録</button>
     <button class="google" onclick="loginWithGoogle()">Google</button>
@@ -68,7 +69,9 @@
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+  const db = firebase.firestore();
 
+  // ログインモーダル表示
   function showLogin(){ 
     document.getElementById('auth-modal').style.display='flex'; 
     document.getElementById('auth-title').innerText='ログイン'; 
@@ -106,12 +109,11 @@
       .catch(e=>{ alert('Googleログインエラー: ' + e.message); });
   }
 
-  auth.onAuthStateChanged(user => { 
-    if(user){ console.log('ログイン中:', user.email); } 
-    else { console.log('ログアウト'); } 
-  });
+  function logout(){
+    auth.signOut();
+  }
 
-  // Cloudinaryアップロード
+  // Cloudinary設定
   const cloudName = "dqud9tdr8";
   const uploadPreset = "annkomoti";
 
@@ -140,6 +142,14 @@
           body: formData
         });
         const data = await res.json();
+
+        // Firestoreに保存
+        await db.collection('users').doc(user.uid).collection('photos').add({
+          url: data.secure_url,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // ギャラリーに表示
         const img = document.createElement('img');
         img.src = data.secure_url;
         document.getElementById('gallery').appendChild(img);
@@ -148,6 +158,37 @@
       }
     }
   }
+
+  // ログイン状態監視＋UI更新＋Firestoreから画像読み込み
+  auth.onAuthStateChanged(async user => {
+    const buttonsDiv = document.getElementById('auth-buttons');
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+
+    if(user){
+      // ログイン中の表示に変更
+      buttonsDiv.innerHTML = `
+        <span>${user.email}でログイン中</span>
+        <button onclick="logout()">ログアウト</button>
+      `;
+
+      // Firestoreから画像読み込み
+      const snapshot = await db.collection('users').doc(user.uid).collection('photos').orderBy('createdAt').get();
+      snapshot.forEach(doc=>{
+        const img = document.createElement('img');
+        img.src = doc.data().url;
+        gallery.appendChild(img);
+      });
+
+    } else {
+      // ログアウト時は元のボタンに戻す
+      buttonsDiv.innerHTML = `
+        <button onclick="showLogin()">ログイン</button>
+        <button onclick="showSignup()">新規登録</button>
+        <button class="google" onclick="loginWithGoogle()">Google</button>
+      `;
+    }
+  });
 </script>
 
 </body>
