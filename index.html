@@ -4,78 +4,76 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Photos</title>
-<!-- Firebase SDK -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  body { margin:0; font-family:'Inter',sans-serif; background:#121212; color:#e0e0e0; }
-  header { position:fixed; top:0; left:0; right:0; height:70px; background:#1f1f1f; display:flex; justify-content:space-between; align-items:center; padding:0 30px; box-shadow:0 4px 10px rgba(0,0,0,0.5); z-index:100; border-bottom-left-radius:10px; border-bottom-right-radius:10px;}
+  body { margin:0; font-family:'Inter',sans-serif; background:#1a1a1a; color:#e0e0e0; }
+  header { position:fixed; top:0; left:0; right:0; height:70px; background:#2d2d2d; display:flex; justify-content:space-between; align-items:center; padding:0 30px; box-shadow:0 2px 20px rgba(0,0,0,0.3); z-index:100; border-bottom-left-radius:10px; border-bottom-right-radius:10px; border-bottom:1px solid #404040;}
   header h1 { margin:0; font-size:1.7em; font-weight:600; color:#ffffff; }
-  header .auth-buttons button { margin-left:12px; padding:8px 16px; border:none; border-radius:25px; cursor:pointer; font-weight:600; background:#2b2b2b; color:white; transition:0.3s; }
-  header .auth-buttons button.google{ background:#000; }
-  header .auth-buttons button:hover{ transform:scale(1.05); }
-  #main { margin-top:90px; padding:20px; display:flex; flex-direction:column; align-items:center; }
-  #drop-area { width:100%; max-width:950px; min-height:160px; border:2px dashed #444; border-radius:12px; display:flex; justify-content:center; align-items:center; color:#aaa; font-size:1.2em; background:#1e1e1e; cursor:pointer; margin-bottom:25px; transition:0.3s; box-shadow:0 2px 5px rgba(0,0,0,0.3); }
-  #drop-area:hover { border-color:#764ba2; box-shadow:0 8px 20px rgba(0,0,0,0.6); transform:translateY(-2px); }
-  #gallery { column-count:3; column-gap:15px; width:100%; max-width:950px; }
-  .img-container { position:relative; display:inline-block; width:100%; margin-bottom:12px; }
-  .img-container img { width:100%; border-radius:12px; transition: transform 0.3s, box-shadow 0.3s; cursor:pointer; }
-  .img-container img:hover { transform: scale(1.03); }
-  .delete-btn { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; }
-  @media (max-width:768px){ #gallery { column-count:2; } }
-  @media (max-width:480px){ #gallery { column-count:1; } }
-  #auth-modal, #image-modal, #trash-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:200; }
-  .modal-content { background:#1f1f1f; padding:30px; border-radius:16px; width:90%; max-width:500px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.5); color:#e0e0e0; }
-  #auth-modal input{ width:100%; margin-bottom:12px; padding:10px; border:1px solid #555; border-radius:8px; font-size:1em; background:#2b2b2b; color:#e0e0e0; }
-  #auth-modal button{ width:100%; padding:10px; border:none; border-radius:25px; background:#2b2b2b; color:white; font-weight:600; cursor:pointer; transition:0.3s; }
-  #auth-modal button.google{ background:#000; }
-  .close-btn { margin-top:15px; display:inline-block; padding:8px 16px; background:#333; border-radius:8px; cursor:pointer; color:#fff; }
-  #image-modal img { max-width:100%; max-height:100%; object-fit:contain; border:none; }
-  #trash-modal .img-container { margin-bottom:15px; }
+  header .auth-buttons button { margin-left:10px; padding:8px 16px; border:none; border-radius:25px; cursor:pointer; font-weight:600; background:#667eea; color:white; transition:0.3s; }
+  header .auth-buttons button:hover{ transform:scale(1.05); box-shadow:0 4px 12px rgba(102,126,234,0.4); }
+  header .auth-buttons button.google{ background:#DB4437; }
+  header .auth-buttons button.google:hover{ box-shadow:0 4px 12px rgba(219,68,55,0.4); }
+  header .auth-buttons button.logout{ background:#e74c3c; }
+  header .auth-buttons button.logout:hover{ box-shadow:0 4px 12px rgba(231,76,60,0.4); }
+  .user-info { color:#b0b0b0; margin-right:15px; font-size:0.9em; }
+  #main { margin-top:90px; padding:20px; max-width:1000px; margin-left:auto; margin-right:auto; }
+  #drop-area { width:100%; min-height:160px; border:2px dashed #555; border-radius:12px; display:flex; justify-content:center; align-items:center; color:#b0b0b0; font-size:1.2em; background:#2d2d2d; cursor:pointer; margin-bottom:25px; transition:0.3s; box-shadow:0 2px 15px rgba(0,0,0,0.3); }
+  #drop-area:hover { border-color:#667eea; box-shadow:0 8px 25px rgba(0,0,0,0.4); transform:translateY(-2px); background:#353535; }
+  #drop-area.dragover { border-color:#667eea; background:#404040; }
+  #gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:15px; }
+  .image-container { position:relative; }
+  #gallery img { width:100%; display:block; border-radius:12px; transition: transform 0.3s, box-shadow 0.3s; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
+  #gallery img:hover { transform: scale(1.03); box-shadow:0 8px 25px rgba(0,0,0,0.5); }
+  .delete-btn { position:absolute; top:8px; right:8px; background:#e74c3c; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:14px; opacity:0.9; transition:0.3s; }
+  .delete-btn:hover { opacity:1; transform:scale(1.1); box-shadow:0 3px 10px rgba(231,76,60,0.4); }
+  #auth-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:200; }
+  #auth-modal .modal-content { background:#2d2d2d; padding:30px; border-radius:16px; width:320px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); border:1px solid #404040; }
+  #auth-modal h2{ margin-top:0; margin-bottom:20px; font-weight:600; color:#ffffff; }
+  #auth-modal input{ width:100%; margin-bottom:12px; padding:12px; border:1px solid #555; border-radius:8px; font-size:1em; box-sizing:border-box; background:#1a1a1a; color:#e0e0e0; }
+  #auth-modal input:focus{ border-color:#667eea; outline:none; box-shadow:0 0 0 2px rgba(102,126,234,0.2); }
+  #auth-modal input::placeholder{ color:#888; }
+  #auth-modal button{ width:100%; padding:12px; border:none; border-radius:25px; background:#667eea; color:white; font-weight:600; cursor:pointer; transition:0.3s; }
+  #auth-modal button:hover{ transform:scale(1.03); box-shadow:0 5px 15px rgba(102,126,234,0.4); }
+  #auth-modal a{ font-size:0.9em; color:#667eea; text-decoration:none; display:block; margin-top:15px; cursor:pointer; transition:0.3s; }
+  #auth-modal a:hover{ color:#8fa4f3; }
+  .loading { display:none; text-align:center; margin:20px; color:#667eea; font-size:1.1em; }
+  .error-msg { color:#ff6b6b; font-size:0.9em; margin-top:8px; background:#4d1f1f; padding:8px; border-radius:6px; border-left:3px solid #ff6b6b; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>My Photos</h1>
-  <div class="auth-buttons">
-    <button onclick="showLogin()">ログイン</button>
-    <button onclick="showSignup()">新規登録</button>
-    <button class="google" onclick="googleLogin()">Googleログイン</button>
+  <div class="auth-section">
+    <span class="user-info" id="userInfo"></span>
+    <div class="auth-buttons" id="authButtons">
+      <button onclick="showLogin()">ログイン</button>
+      <button onclick="showSignup()">新規登録</button>
+      <button class="google" onclick="loginWithGoogle()">Google</button>
+    </div>
   </div>
 </header>
 
 <div id="main">
-  <div id="drop-area">ここに画像をドラッグ＆ドロップ、またはクリックして選択</div>
-  <input type="file" id="fileElem" multiple style="display:none">
+  <div id="drop-area">ここに画像をドラッグ＆ドロップ、またはクリック</div>
+  <input type="file" id="fileElem" multiple accept="image/*" style="display:none">
+  <div class="loading" id="loading">アップロード中...</div>
   <div id="gallery"></div>
 </div>
 
-<!-- Modals -->
 <div id="auth-modal">
   <div class="modal-content">
     <h2 id="auth-title">ログイン</h2>
     <input type="email" id="email" placeholder="メール">
     <input type="password" id="password" placeholder="パスワード">
+    <div class="error-msg" id="authError"></div>
     <button id="auth-submit">送信</button>
-    <button class="google" onclick="googleLogin()">Googleログイン</button>
-    <a href="#" onclick="closeAuth()" class="close-btn">閉じる</a>
-  </div>
-</div>
-
-<div id="image-modal" onclick="closeImage()">
-  <img id="modal-img" src="">
-</div>
-
-<div id="trash-modal">
-  <div class="modal-content">
-    <h2>ゴミ箱</h2>
-    <div id="trash-gallery"></div>
-    <div class="close-btn" onclick="closeTrash()">閉じる</div>
+    <a onclick="closeAuth()">閉じる</a>
   </div>
 </div>
 
@@ -84,106 +82,286 @@
   const firebaseConfig = {
     apiKey: "AIzaSyBtHs722o6_JWvbgIo5rHuAGEcnNiGqFhg",
     authDomain: "aaaaaa-d2ab0.firebaseapp.com",
-    projectId: "aaaaaa-d2ab0"
+    projectId: "aaaaaa-d2ab0",
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  function showLogin(){
-    document.getElementById('auth-modal').style.display='flex';
-    document.getElementById('auth-title').innerText='ログイン';
+  // UI更新
+  function updateUI(user) {
+    const userInfo = document.getElementById('userInfo');
+    const authButtons = document.getElementById('authButtons');
+    
+    if (user) {
+      userInfo.textContent = user.email;
+      authButtons.innerHTML = '<button class="logout" onclick="logout()">ログアウト</button>';
+    } else {
+      userInfo.textContent = '';
+      authButtons.innerHTML = `
+        <button onclick="showLogin()">ログイン</button>
+        <button onclick="showSignup()">新規登録</button>
+        <button class="google" onclick="loginWithGoogle()">Google</button>
+      `;
+    }
+  }
+
+  function logout() {
+    auth.signOut();
+    document.getElementById('gallery').innerHTML = '';
+  }
+
+  function showLogin(){ 
+    document.getElementById('auth-modal').style.display='flex'; 
+    document.getElementById('auth-title').innerText='ログイン'; 
     document.getElementById('auth-submit').onclick=login;
+    clearAuthError();
   }
-  function showSignup(){
-    document.getElementById('auth-modal').style.display='flex';
-    document.getElementById('auth-title').innerText='新規登録';
-    document.getElementById('auth-submit').onclick=signup;
+  function showSignup(){ 
+    document.getElementById('auth-modal').style.display='flex'; 
+    document.getElementById('auth-title').innerText='新規登録'; 
+    document.getElementById('auth-submit').onclick=signup; 
+    clearAuthError();
   }
-  function closeAuth(){ document.getElementById('auth-modal').style.display='none'; }
-
-  function signup(){
-    const email = document.getElementById('email').value;
-    const pw = document.getElementById('password').value;
-    auth.createUserWithEmailAndPassword(email,pw)
-      .then(()=>{ alert('登録成功'); closeAuth(); })
-      .catch(e=>alert(e.message));
+  function closeAuth(){ 
+    document.getElementById('auth-modal').style.display='none'; 
+    clearAuthError();
   }
-  function login(){
-    const email = document.getElementById('email').value;
-    const pw = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email,pw)
-      .then(()=>{ alert('ログイン成功'); closeAuth(); })
-      .catch(e=>alert(e.message));
+  function clearAuthError() {
+    document.getElementById('authError').textContent = '';
   }
 
-  function googleLogin(){
+  function signup(){ 
+    const email = document.getElementById('email').value; 
+    const pw = document.getElementById('password').value; 
+    if (!email || !pw) {
+      document.getElementById('authError').textContent = 'メールとパスワードを入力してください';
+      return;
+    }
+    auth.createUserWithEmailAndPassword(email, pw)
+      .then(()=>{ 
+        alert('登録成功'); 
+        closeAuth(); 
+      })
+      .catch(e => {
+        console.error('Signup error:', e);
+        document.getElementById('authError').textContent = getErrorMessage(e.code);
+      }); 
+  }
+  
+  function login(){ 
+    const email = document.getElementById('email').value; 
+    const pw = document.getElementById('password').value; 
+    if (!email || !pw) {
+      document.getElementById('authError').textContent = 'メールとパスワードを入力してください';
+      return;
+    }
+    auth.signInWithEmailAndPassword(email, pw)
+      .then(()=>{ 
+        alert('ログイン成功'); 
+        closeAuth(); 
+      })
+      .catch(e => {
+        console.error('Login error:', e);
+        document.getElementById('authError').textContent = getErrorMessage(e.code);
+      }); 
+  }
+
+  function loginWithGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
-      .then(result=>{ alert('Googleログイン成功: '+result.user.email); closeAuth(); })
-      .catch(error=>alert(error.message));
+      .then(result=>{
+        alert('Googleログイン成功: ' + result.user.email);
+        closeAuth();
+      })
+      .catch(e=>{ 
+        console.error('Google login error:', e);
+        alert('Googleログインエラー: ' + getErrorMessage(e.code)); 
+      });
   }
+
+  function getErrorMessage(errorCode) {
+    switch(errorCode) {
+      case 'auth/user-not-found':
+        return 'ユーザーが見つかりません';
+      case 'auth/wrong-password':
+        return 'パスワードが間違っています';
+      case 'auth/email-already-in-use':
+        return 'このメールアドレスは既に使用されています';
+      case 'auth/weak-password':
+        return 'パスワードが弱すぎます（6文字以上）';
+      case 'auth/invalid-email':
+        return 'メールアドレスが無効です';
+      default:
+        return 'エラーが発生しました: ' + errorCode;
+    }
+  }
+
+  auth.onAuthStateChanged(user => { 
+    updateUI(user);
+    if(user){ 
+      console.log('ログイン中:', user.email); 
+    } else { 
+      console.log('ログアウト'); 
+    } 
+  });
+
+  // Cloudinaryアップロード設定
+  const cloudName = "dqud9tdr8";
+  const uploadPreset = "annkomoti";
 
   const dropArea = document.getElementById('drop-area');
   const fileElem = document.getElementById('fileElem');
-  const gallery = document.getElementById('gallery');
-  const trashGallery = document.getElementById('trash-gallery');
-  let images = [];
-  let trash = [];
+  
+  dropArea.addEventListener('click', () => fileElem.click());
+  
+  dropArea.addEventListener('dragover', e => { 
+    e.preventDefault(); 
+    dropArea.classList.add('dragover');
+  });
+  
+  dropArea.addEventListener('dragleave', e => { 
+    e.preventDefault(); 
+    dropArea.classList.remove('dragover');
+  });
+  
+  dropArea.addEventListener('drop', e => { 
+    e.preventDefault(); 
+    dropArea.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files); 
+  });
+  
+  fileElem.addEventListener('change', e => handleFiles(e.target.files));
 
-  dropArea.addEventListener('click',()=>fileElem.click());
-  dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.style.borderColor='#764ba2'; });
-  dropArea.addEventListener('dragleave', e=>{ e.preventDefault(); dropArea.style.borderColor='#444'; });
-  dropArea.addEventListener('drop', e=>{ e.preventDefault(); dropArea.style.borderColor='#444'; handleFiles(e.dataTransfer.files); });
-  fileElem.addEventListener('change', e=>handleFiles(e.target.files));
+  async function handleFiles(files) {
+    if (!files.length) return;
+    const user = auth.currentUser;
+    if (!user) { 
+      alert('ログインしてください'); 
+      return; 
+    }
 
-  function handleFiles(files){
-    Array.from(files).forEach(file=>{
-      const url = URL.createObjectURL(file);
-      const id = Date.now() + Math.random();
-      images.push({id, url});
-      renderGallery();
-    });
+    const loading = document.getElementById('loading');
+    loading.style.display = 'block';
+
+    for (let file of files) {
+      // ファイルタイプチェック
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name} は画像ファイルではありません`);
+        continue;
+      }
+
+      // ファイルサイズチェック (10MB制限)
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`${file.name} のサイズが大きすぎます（10MB以下）`);
+        continue;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      formData.append('folder', 'private_photos/' + user.uid);
+      formData.append('public_id', `${user.uid}_${Date.now()}_${Math.random().toString(36).substr(2, 16)}`);
+      // プライベート画像として設定
+      formData.append('type', 'private');
+      formData.append('access_mode', 'token');
+
+      try {
+        console.log('Cloudinaryにアップロード中...', file.name);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('Cloudinaryレスポンス:', data);
+        
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+
+        // プライベート画像の場合、署名付きURLを生成する必要があります
+        let displayUrl = data.secure_url;
+        if (data.type === 'private') {
+          // 実際の実装では、バックエンドでCloudinary SDKを使って署名付きURLを生成
+          console.log('プライベート画像がアップロードされました:', data.public_id);
+          // 暫定的に元のURLを使用（本来は署名付きURLが必要）
+        }
+        
+        // 画像をギャラリーに追加
+        addImageToGallery(displayUrl, data.public_id);
+        
+      } catch (err) {
+        console.error('アップロードエラー:', err);
+        alert(`${file.name} のアップロードに失敗しました: ${err.message}`);
+      }
+    }
+
+    loading.style.display = 'none';
   }
 
-  function renderGallery(){
-    gallery.innerHTML='';
-    images.forEach(img=>{
-      const div = document.createElement('div'); div.className='img-container';
-      const image = document.createElement('img'); image.src=img.url; image.onclick=()=>openImage(img.url);
-      const delBtn = document.createElement('button'); delBtn.className='delete-btn'; delBtn.innerText='×'; delBtn.onclick=()=>moveToTrash(img.id);
-      div.appendChild(image); div.appendChild(delBtn);
-      gallery.appendChild(div);
-    });
+  function addImageToGallery(imageUrl, publicId) {
+    const container = document.createElement('div');
+    container.className = 'image-container';
+    
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = 'Uploaded photo';
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.innerHTML = '×';
+    deleteBtn.onclick = () => deleteImage(container, publicId);
+    
+    container.appendChild(img);
+    container.appendChild(deleteBtn);
+    document.getElementById('gallery').appendChild(container);
   }
 
-  function openImage(url){ document.getElementById('modal-img').src=url; document.getElementById('image-modal').style.display='flex'; }
-  function closeImage(){ document.getElementById('image-modal').style.display='none'; }
-
-  function moveToTrash(id){
-    const index = images.findIndex(i=>i.id===id);
-    if(index>-1){ trash.push(images[index]); images.splice(index,1); renderGallery(); renderTrash(); }
+  async function deleteImage(container, publicId) {
+    if (!confirm('この画像を削除しますか？')) return;
+    
+    try {
+      // Cloudinaryから削除（要API設定）
+      // const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     public_id: publicId,
+      //     api_key: 'YOUR_API_KEY',
+      //     timestamp: Math.round(Date.now() / 1000),
+      //     signature: 'GENERATED_SIGNATURE'
+      //   }),
+      //   headers: { 'Content-Type': 'application/json' }
+      // });
+      
+      // UIから削除
+      container.remove();
+      
+    } catch (err) {
+      console.error('削除エラー:', err);
+      alert('削除に失敗しました');
+    }
   }
 
-  function renderTrash(){
-    trashGallery.innerHTML='';
-    trash.forEach(img=>{
-      const div = document.createElement('div'); div.className='img-container';
-      const image = document.createElement('img'); image.src=img.url; image.onclick=()=>openImage(img.url);
-      const restoreBtn = document.createElement('button'); restoreBtn.className='delete-btn'; restoreBtn.innerText='↩'; restoreBtn.onclick=()=>restoreFromTrash(img.id);
-      div.appendChild(image); div.appendChild(restoreBtn);
-      trashGallery.appendChild(div);
-    });
+  // テスト用：Cloudinary接続確認
+  function testCloudinaryConnection() {
+    console.log('Cloudinary設定:');
+    console.log('Cloud Name:', cloudName);
+    console.log('Upload Preset:', uploadPreset);
+    console.log('Upload URL:', `https://api.cloudinary.com/v1_1/${cloudName}/upload`);
+    console.log('⚠️ 重要: プライベート画像を使用する場合、Cloudinaryのupload presetで以下を設定してください:');
+    console.log('1. Resource Type: Image');
+    console.log('2. Access Mode: Token (またはPrivate)');
+    console.log('3. Delivery Type: Private');
+    console.log('4. 完全なプライバシーには署名付きURLとバックエンドが必要です');
   }
 
-  function restoreFromTrash(id){
-    const index = trash.findIndex(i=>i.id===id);
-    if(index>-1){ images.push(trash[index]); trash.splice(index,1); renderGallery(); renderTrash(); }
-  }
-
-  function openTrash(){ document.getElementById('trash-modal').style.display='flex'; renderTrash(); }
-  function closeTrash(){ document.getElementById('trash-modal').style.display='none'; }
-
-  auth.onAuthStateChanged(user=>{ if(user){ console.log('ログイン中:', user.email); }else{ console.log('ログアウト'); } });
+  // 初回ロード時にテスト実行
+  testCloudinaryConnection();
 </script>
+
 </body>
 </html>
