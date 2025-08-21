@@ -127,7 +127,7 @@ header .auth-buttons button.google { background:#DB4437; }
   display:none;
   position:fixed; top:0; left:0; right:0; bottom:0;
   background:rgba(0,0,0,0.8);
-  display:flex; justify-content:center; align-items:center;
+  justify-content:center; align-items:center;
   z-index:200;
 }
 #auth-modal .modal-content {
@@ -180,8 +180,8 @@ header .auth-buttons button.google { background:#DB4437; }
   
   <div id="gallery-controls">
     <button id="bulk-open-btn" onclick="openAllImagesInTabs()">全ての画像を新しいタブで開く</button>
-    <!-- Photopea追加 -->
-    <button id="edit-with-photopea-btn" onclick="openAllInPhotopea()">Photopeaで編集</button>
+    <!-- Photopea修正 -->
+    <button id="edit-with-photopea-btn" onclick="openPhotopea()">Photopeaで編集</button>
   </div>
   
   <div id="gallery"></div>
@@ -250,7 +250,7 @@ function login(){
 function loginWithGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
-    .then(r=>{ alert('Googleログイン成功: '+r.user.email); closeAuth(); })
+    .then(r=>{ alert('Googleログイン成功: '+r.user.email); })
     .catch(e=>alert('Googleログインエラー: '+e.message));
 }
 function logout(){ auth.signOut(); }
@@ -314,19 +314,9 @@ function openAllImagesInTabs(){
   });
 }
 
-// Photopeaで編集
-function openAllInPhotopea() {
-  if(currentPhotoUrls.length === 0){
-      alert('編集する画像がありません');
-      return;
-  }
-
-  currentPhotoUrls.forEach((url, index) => {
-      setTimeout(() => {
-          const photopeaURL = `https://www.photopea.com#${encodeURIComponent(url)}`;
-          window.open(photopeaURL, '_blank');
-      }, index * 200);
-  });
+// Photopeaで編集（修正版：1回だけ開く）
+function openPhotopea() {
+  window.open('https://www.photopea.com/', '_blank');
 }
 
 async function displayGallery(){
