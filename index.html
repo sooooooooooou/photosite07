@@ -9,138 +9,38 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body {
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background:#000;
-  color:#fff;
-}
-header {
-  position:fixed;
-  top:0; left:0; right:0;
-  height:70px;
-  background:#111;
-  display:flex; justify-content:space-between; align-items:center;
-  padding:0 30px;
-  box-shadow:0 2px 10px rgba(255,255,255,0.1);
-  z-index:100;
-}
+body { margin:0; font-family:'Inter',sans-serif; background:#000; color:#fff; }
+header { position:fixed; top:0; left:0; right:0; height:70px; background:#111; display:flex; justify-content:space-between; align-items:center; padding:0 30px; box-shadow:0 2px 10px rgba(255,255,255,0.1); z-index:100; }
 header h1 { margin:0; font-size:1.7em; font-weight:600; }
-header .auth-buttons button {
-  margin-left:10px;
-  padding:8px 16px;
-  border:none; border-radius:25px;
-  cursor:pointer; font-weight:600;
-  background:#444; color:#fff;
-  transition:0.3s;
-}
-header .auth-buttons button:hover {
-  transform:scale(1.05);
-  box-shadow:0 4px 12px rgba(255,255,255,0.2);
-}
+header .auth-buttons button { margin-left:10px; padding:8px 16px; border:none; border-radius:25px; cursor:pointer; font-weight:600; background:#444; color:#fff; transition:0.3s; }
+header .auth-buttons button:hover { transform:scale(1.05); box-shadow:0 4px 12px rgba(255,255,255,0.2); }
 header .auth-buttons button.google { background:#DB4437; }
 
-#main {
-  margin-top:90px;
-  padding:20px;
-  max-width:1000px;
-  margin-left:auto; margin-right:auto;
-}
-#drop-area {
-  width:100%; min-height:160px;
-  border:2px dashed #666;
-  border-radius:12px;
-  display:flex; justify-content:center; align-items:center;
-  font-size:1.2em;
-  background:#111;
-  cursor:pointer;
-  margin-bottom:15px;
-  transition:0.3s;
-}
-#drop-area:hover {
-  border-color:#fff;
-  box-shadow:0 0 10px rgba(255,255,255,0.3);
-}
+#main { margin-top:90px; padding:20px; max-width:1000px; margin-left:auto; margin-right:auto; }
+#drop-area { width:100%; min-height:160px; border:2px dashed #666; border-radius:12px; display:flex; justify-content:center; align-items:center; font-size:1.2em; background:#111; cursor:pointer; margin-bottom:15px; transition:0.3s; }
+#drop-area:hover { border-color:#fff; box-shadow:0 0 10px rgba(255,255,255,0.3); }
 #info { margin-bottom:20px; font-size:0.95em; color:#ccc; }
 
-#gallery-controls {
-  margin-bottom:20px;
-  display:flex;
-  gap:10px;
-}
-#bulk-open-btn {
-  padding:10px 20px;
-  background:#0066cc;
-  color:#fff;
-  border:none;
-  border-radius:25px;
-  cursor:pointer;
-  font-weight:600;
-  transition:0.3s;
-  display:none;
-}
-#bulk-open-btn:hover {
-  transform:scale(1.05);
-  box-shadow:0 4px 12px rgba(0,102,204,0.4);
-}
+#gallery-controls { margin-bottom:20px; display:flex; gap:10px; }
+#bulk-open-btn { padding:10px 20px; background:#0066cc; color:#fff; border:none; border-radius:25px; cursor:pointer; font-weight:600; transition:0.3s; display:none; }
+#bulk-open-btn:hover { transform:scale(1.05); box-shadow:0 4px 12px rgba(0,102,204,0.4); }
 
-#gallery {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:15px;
-}
+#gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:15px; }
 #gallery .photo-wrapper { position:relative; }
-#gallery img {
-  width:100%;
-  display:block;
-  border-radius:12px;
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor:pointer;
-}
-#gallery img:hover {
-  transform: scale(1.03);
-  box-shadow:0 0 15px rgba(255,255,255,0.3);
-}
-.delete-btn {
-  position:absolute; top:8px; right:8px;
-  background:rgba(255,0,0,0.8);
-  border:none; border-radius:50%;
-  width:25px; height:25px; color:white;
-  font-weight:bold; cursor:pointer;
-}
-#auth-modal {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.8);
-  display:flex; justify-content:center; align-items:center;
-  z-index:200;
-}
-#auth-modal .modal-content {
-  background:#222; color:#fff;
-  padding:30px; border-radius:16px;
-  width:320px; text-align:center;
-}
-#auth-modal input {
-  width:100%; margin-bottom:12px; padding:10px;
-  border:1px solid #555; border-radius:8px;
-  background:#000; color:#fff;
-}
-#auth-modal button {
-  width:100%; padding:10px;
-  border:none; border-radius:25px;
-  background:#444; color:white;
-  font-weight:600; cursor:pointer;
-}
-#modal-img {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.9);
-  justify-content:center; align-items:center;
-  z-index:300; cursor:pointer;
-}
-#modal-img img {
-  max-width:90%; max-height:90%;
-  border-radius:12px;
-}
+#gallery img { width:100%; display:block; border-radius:12px; transition: transform 0.3s, box-shadow 0.3s; cursor:pointer; }
+#gallery img:hover { transform: scale(1.03); box-shadow:0 0 15px rgba(255,255,255,0.3); }
+.delete-btn { position:absolute; top:8px; right:8px; background:rgba(255,0,0,0.8); border:none; border-radius:50%; width:25px; height:25px; color:white; font-weight:bold; cursor:pointer; }
+
+#auth-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; z-index:200; }
+#auth-modal .modal-content { background:#222; color:#fff; padding:30px; border-radius:16px; width:320px; text-align:center; }
+#auth-modal input { width:100%; margin-bottom:12px; padding:10px; border:1px solid #555; border-radius:8px; background:#000; color:#fff; }
+#auth-modal button { width:100%; padding:10px; border:none; border-radius:25px; background:#444; color:white; font-weight:600; cursor:pointer; }
+
+#modal-img { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:300; cursor:pointer; }
+#modal-img img { max-width:90%; max-height:90%; border-radius:12px; }
+
+#edit-toolbar { display:none; position:fixed; top:20px; right:20px; z-index:400; background:rgba(0,0,0,0.7); padding:10px; border-radius:12px; display:flex; gap:10px; }
+#edit-toolbar button { padding:5px 10px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -179,9 +79,18 @@ header .auth-buttons button.google { background:#DB4437; }
   </div>
 </div>
 
-<div id="modal-img" onclick="this.style.display='none'"><img id="modal-img-inner"></div>
+<div id="modal-img"><img id="modal-img-inner"></div>
+
+<div id="edit-toolbar">
+  <button id="rotate-left">⟲</button>
+  <button id="rotate-right">⟳</button>
+  <button id="reset-edit">リセット</button>
+  <button id="start-crop">トリミング</button>
+  <button id="end-crop" style="display:none;">完了</button>
+</div>
 
 <script>
+// Firebase初期化
 const firebaseConfig = {
     apiKey: "AIzaSyBtHs722o6_JWvbgIo5rHuAGEcnNiGqFhg",
     authDomain: "aaaaaa-d2ab0.firebaseapp.com",
@@ -191,6 +100,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// DOM要素
 const dropArea = document.getElementById('drop-area');
 const fileElem = document.getElementById('fileElem');
 const gallery = document.getElementById('gallery');
@@ -198,44 +108,18 @@ const uploadInfo = document.getElementById('upload-info');
 const storageInfo = document.getElementById('storage-info');
 const bulkOpenBtn = document.getElementById('bulk-open-btn');
 
-// 現在のフォトURLsを保存する配列
 let currentPhotoUrls = [];
 
-function showLogin(){
-  document.getElementById('auth-modal').style.display='flex';
-  document.getElementById('auth-title').innerText='ログイン';
-  document.getElementById('auth-submit').onclick=login;
-}
-function showSignup(){
-  document.getElementById('auth-modal').style.display='flex';
-  document.getElementById('auth-title').innerText='新規登録';
-  document.getElementById('auth-submit').onclick=signup;
-}
-function closeAuth(){
-  document.getElementById('auth-modal').style.display='none';
-}
-function signup(){
-  const email = document.getElementById('email').value;
-  const pw = document.getElementById('password').value;
-  auth.createUserWithEmailAndPassword(email, pw)
-    .then(()=>{ alert('登録成功'); closeAuth(); })
-    .catch(e=>alert(e.message));
-}
-function login(){
-  const email = document.getElementById('email').value;
-  const pw = document.getElementById('password').value;
-  auth.signInWithEmailAndPassword(email, pw)
-    .then(()=>{ alert('ログイン成功'); closeAuth(); })
-    .catch(e=>alert(e.message));
-}
-function loginWithGoogle(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(r=>{ alert('Googleログイン成功: '+r.user.email); closeAuth(); })
-    .catch(e=>alert('Googleログインエラー: '+e.message));
-}
+// 認証
+function showLogin(){ document.getElementById('auth-modal').style.display='flex'; document.getElementById('auth-title').innerText='ログイン'; document.getElementById('auth-submit').onclick=login; }
+function showSignup(){ document.getElementById('auth-modal').style.display='flex'; document.getElementById('auth-title').innerText='新規登録'; document.getElementById('auth-submit').onclick=signup; }
+function closeAuth(){ document.getElementById('auth-modal').style.display='none'; }
+function signup(){ const email=document.getElementById('email').value; const pw=document.getElementById('password').value; auth.createUserWithEmailAndPassword(email,pw).then(()=>{ alert('登録成功'); closeAuth(); }).catch(e=>alert(e.message)); }
+function login(){ const email=document.getElementById('email').value; const pw=document.getElementById('password').value; auth.signInWithEmailAndPassword(email,pw).then(()=>{ alert('ログイン成功'); closeAuth(); }).catch(e=>alert(e.message)); }
+function loginWithGoogle(){ const provider=new firebase.auth.GoogleAuthProvider(); auth.signInWithPopup(provider).then(r=>{ alert('Googleログイン成功: '+r.user.email); closeAuth(); }).catch(e=>alert('Googleログインエラー: '+e.message)); }
 function logout(){ auth.signOut(); }
 
+// Cloudinary
 const cloudName = "dqud9tdr8";
 const uploadPreset = "annkomoti";
 
@@ -262,267 +146,114 @@ async function handleFiles(files){
       const data = await res.json();
       const end = performance.now();
       const uploadTime = ((end-start)/1000).toFixed(2);
-
       uploadInfo.innerText = `アップロード完了: ${file.name} (${uploadTime}秒)`;
 
-      await db.collection('users').doc(user.uid).collection('photos').add({
-        url: data.secure_url,
-        size: file.size,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      await db.collection('users').doc(user.uid).collection('photos').add({ url:data.secure_url, size:file.size, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
       displayGallery();
     }catch(err){ alert('アップロードエラー: '+err.message); }
   }
 }
 
-// 全ての画像を新しいタブで開く機能
+// ギャラリー表示
 function openAllImagesInTabs(){
-  if(currentPhotoUrls.length === 0){
-    alert('開く画像がありません');
-    return;
-  }
-  
-  // ブラウザがポップアップをブロックしないように確認
-  if(currentPhotoUrls.length > 10){
-    if(!confirm(`${currentPhotoUrls.length}枚の画像を新しいタブで開きます。よろしいですか？`)){
-      return;
-    }
-  }
-
-  // 各画像を新しいタブで開く（少し遅延を入れてブラウザの負荷を軽減）
-  currentPhotoUrls.forEach((url, index) => {
-    setTimeout(() => {
-      window.open(url, '_blank');
-    }, index * 100); // 100ms間隔で開く
-  });
+  if(currentPhotoUrls.length===0){ alert('開く画像がありません'); return; }
+  if(currentPhotoUrls.length>10 && !confirm(`${currentPhotoUrls.length}枚の画像を新しいタブで開きます。よろしいですか？`)) return;
+  currentPhotoUrls.forEach((url,index)=>{ setTimeout(()=>window.open(url,'_blank'), index*100); });
 }
 
 async function displayGallery(){
-  gallery.innerHTML = '';
-  currentPhotoUrls = []; // URLリストをリセット
+  gallery.innerHTML='';
+  currentPhotoUrls=[];
   const user = auth.currentUser;
-  if(!user) {
-    bulkOpenBtn.style.display = 'none';
-    return;
-  }
-  
+  if(!user){ bulkOpenBtn.style.display='none'; return; }
+
   const snapshot = await db.collection('users').doc(user.uid).collection('photos').orderBy('createdAt','desc').get();
-  let totalSize = 0;
+  let totalSize=0;
 
   snapshot.forEach(doc=>{
-    const data = doc.data();
-    totalSize += data.size ? data.size : 0;
-    
-    // URLを配列に追加
+    const data=doc.data();
+    totalSize += data.size ? data.size :0;
     currentPhotoUrls.push(data.url);
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'photo-wrapper';
+    const wrapper=document.createElement('div'); wrapper.className='photo-wrapper';
+    const img=document.createElement('img'); img.src=data.url;
+    img.onclick=()=>{ setCurrentImage(data.url); document.getElementById('modal-img').style.display='flex'; };
+    const delBtn=document.createElement('button'); delBtn.innerText='×'; delBtn.className='delete-btn';
+    delBtn.onclick=async e=>{ e.stopPropagation(); if(!confirm('本当に削除しますか？')) return; await db.collection('users').doc(user.uid).collection('photos').doc(doc.id).delete(); displayGallery(); };
 
-    const img = document.createElement('img');
-    img.src = data.url;
-    img.onclick = ()=>{ 
-      document.getElementById('modal-img-inner').src = data.url; 
-      document.getElementById('modal-img').style.display='flex'; 
-    };
-
-    const delBtn = document.createElement('button');
-    delBtn.innerText='×';
-    delBtn.className='delete-btn';
-    delBtn.onclick = async (e)=>{
-      e.stopPropagation();
-      if(!confirm('本当に削除しますか？')) return;
-      await db.collection('users').doc(user.uid).collection('photos').doc(doc.id).delete();
-      displayGallery();
-    };
-
-    wrapper.appendChild(img);
-    wrapper.appendChild(delBtn);
-    gallery.appendChild(wrapper);
+    wrapper.appendChild(img); wrapper.appendChild(delBtn); gallery.appendChild(wrapper);
   });
 
-  storageInfo.innerText = `総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
-  
-  // 画像がある場合のみ一括表示ボタンを表示
-  bulkOpenBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
+  storageInfo.innerText=`総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
+  bulkOpenBtn.style.display = currentPhotoUrls.length>0 ? 'block':'none';
 }
+
+// 編集機能
+const editStates={};
+let cropping=false, cropStart=null, cropRect=null;
+const modalImg=document.getElementById('modal-img-inner');
+const modal=document.getElementById('modal-img');
+const toolbar=document.getElementById('edit-toolbar');
+const rotateLeftBtn=document.getElementById('rotate-left');
+const rotateRightBtn=document.getElementById('rotate-right');
+const resetBtn=document.getElementById('reset-edit');
+const startCropBtn=document.getElementById('start-crop');
+const endCropBtn=document.getElementById('end-crop');
+let currentImgUrl=null;
+
+function setCurrentImage(url){
+  currentImgUrl=url;
+  modalImg.src=url;
+  toolbar.style.display='flex';
+  const state = editStates[url] || {rotation:0, clip:'none'};
+  modalImg.style.transform=`rotate(${state.rotation}deg)`;
+  modalImg.style.clipPath=state.clip;
+}
+
+modal.addEventListener('click', e=>{ if(e.target===modal){ modal.style.display='none'; toolbar.style.display='none'; currentImgUrl=null; } });
+
+rotateLeftBtn.onclick=()=>{ if(!currentImgUrl) return; let state=editStates[currentImgUrl]||{rotation:0, clip:'none'}; state.rotation=(state.rotation-90+360)%360; modalImg.style.transform=`rotate(${state.rotation}deg)`; editStates[currentImgUrl]=state; };
+rotateRightBtn.onclick=()=>{ if(!currentImgUrl) return; let state=editStates[currentImgUrl]||{rotation:0, clip:'none'}; state.rotation=(state.rotation+90)%360; modalImg.style.transform=`rotate(${state.rotation}deg)`; editStates[currentImgUrl]=state; };
+resetBtn.onclick=()=>{ if(!currentImgUrl) return; modalImg.style.transform='rotate(0deg)'; modalImg.style.clipPath='none'; editStates[currentImgUrl]={rotation:0, clip:'none'}; };
+
+// トリミング
+startCropBtn.onclick=()=>{
+  cropping=true; cropStart=null;
+  cropRect=document.createElement('div'); cropRect.style.position='absolute'; cropRect.style.border='2px dashed #fff'; cropRect.style.pointerEvents='none'; modal.appendChild(cropRect);
+  endCropBtn.style.display='inline-block'; startCropBtn.style.display='none';
+};
+endCropBtn.onclick=()=>{
+  if(!currentImgUrl || !cropStart || !cropRect) return;
+  const rect=cropRect.getBoundingClientRect(); const imgRect=modalImg.getBoundingClientRect();
+  const top=((rect.top-imgRect.top)/imgRect.height)*100;
+  const left=((rect.left-imgRect.left)/imgRect.width)*100;
+  const bottom=100-((rect.bottom-imgRect.top)/imgRect.height)*100;
+  const right=100-((rect.right-imgRect.left)/imgRect.width)*100;
+  const clipValue=`inset(${top}% ${right}% ${bottom}% ${left}%)`;
+  modalImg.style.clipPath=clipValue; let state=editStates[currentImgUrl]||{rotation:0,clip:'none'}; state.clip=clipValue; editStates[currentImgUrl]=state;
+
+  cropping=false; cropStart=null; cropRect.remove(); cropRect=null;
+  endCropBtn.style.display='none'; startCropBtn.style.display='inline-block';
+};
+
+modalImg.addEventListener('mousedown', e=>{ if(!cropping) return; cropStart={x:e.clientX, y:e.clientY}; cropRect.style.left=`${cropStart.x}px`; cropRect.style.top=`${cropStart.y}px`; cropRect.style.width='0px'; cropRect.style.height='0px'; });
+modalImg.addEventListener('mousemove', e=>{ if(!cropping || !cropStart) return; const x=Math.min(e.clientX,cropStart.x); const y=Math.min(e.clientY,cropStart.y); const w=Math.abs(e.clientX-cropStart.x); const h=Math.abs(e.clientY-cropStart.y); cropRect.style.left=`${x}px`; cropRect.style.top=`${y}px`; cropRect.style.width=`${w}px`; cropRect.style.height=`${h}px`; });
+modalImg.addEventListener('mouseup', e=>{ if(!cropping) return; });
 
 auth.onAuthStateChanged(user=>{
-  const authDiv = document.getElementById('auth-buttons');
-  if(user){
-    authDiv.innerHTML = `${user.email} <button onclick="logout()">ログアウト</button>`;
-    displayGallery();
-  }else{
-    authDiv.innerHTML = `<button onclick="showLogin()">ログイン</button><button onclick="showSignup()">新規登録</button><button class="google" onclick="loginWithGoogle()">Google</button>`;
-    gallery.innerHTML = '';
-    currentPhotoUrls = [];
-    bulkOpenBtn.style.display = 'none';
-    uploadInfo.innerText = 'アップロード時間がここに表示されます';
-    storageInfo.innerText = '総ストレージ使用量がここに表示されます';
-  }
-});
-</script>
-</body>
-<!-- 編集用ツールバー -->
-<div id="edit-toolbar" style="display:none; position:fixed; top:20px; right:20px; z-index:400; background:rgba(0,0,0,0.7); padding:10px; border-radius:12px; display:flex; gap:10px;">
-  <button id="rotate-left" style="padding:5px 10px;">⟲</button>
-  <button id="rotate-right" style="padding:5px 10px;">⟳</button>
-  <button id="reset-edit" style="padding:5px 10px;">リセット</button>
-  <button id="start-crop" style="padding:5px 10px;">トリミング</button>
-  <button id="end-crop" style="padding:5px 10px; display:none;">完了</button>
-</div>
-
-<script>
-const editStates = {}; // 画像ごとの状態保持
-let cropping = false;
-let cropStart = null;
-let cropRect = null;
-
-const modalImg = document.getElementById('modal-img-inner');
-const modal = document.getElementById('modal-img');
-const toolbar = document.getElementById('edit-toolbar');
-const rotateLeftBtn = document.getElementById('rotate-left');
-const rotateRightBtn = document.getElementById('rotate-right');
-const resetBtn = document.getElementById('reset-edit');
-const startCropBtn = document.getElementById('start-crop');
-const endCropBtn = document.getElementById('end-crop');
-
-let currentImgUrl = null;
-
-// モーダル表示時に編集ツールを表示
-modal.addEventListener('click', e => {
-  if(e.target === modal){
-    modal.style.display='none';
-    toolbar.style.display='none';
-  }
+  const authDiv=document.getElementById('auth-buttons');
+  if(user){ authDiv.innerHTML=`${user.email} <button onclick="logout()">ログアウト</button>`; displayGallery(); }
+  else{ authDiv.innerHTML=`<button onclick="showLogin()">ログイン</button><button onclick="showSignup()">新規登録</button><button class="google" onclick="loginWithGoogle()">Google</button>`; gallery.innerHTML=''; currentPhotoUrls=[]; bulkOpenBtn.style.display='none'; uploadInfo.innerText='アップロード時間がここに表示されます'; storageInfo.innerText='総ストレージ使用量がここに表示されます'; }
 });
 
-// 画像クリックで現在のURLを取得
-function setCurrentImage(url){
-  currentImgUrl = url;
-  toolbar.style.display='flex';
-
-  // 既存状態を復元
-  const state = editStates[url] || {rotation:0, clip:'none'};
-  modalImg.style.transform = `rotate(${state.rotation}deg)`;
-  modalImg.style.clipPath = state.clip;
-}
-
-// 回転ボタン
-rotateLeftBtn.onclick = () => {
-  if(!currentImgUrl) return;
-  let state = editStates[currentImgUrl] || {rotation:0, clip:'none'};
-  state.rotation = (state.rotation - 90 + 360) % 360;
-  modalImg.style.transform = `rotate(${state.rotation}deg)`;
-  editStates[currentImgUrl] = state;
-};
-rotateRightBtn.onclick = () => {
-  if(!currentImgUrl) return;
-  let state = editStates[currentImgUrl] || {rotation:0, clip:'none'};
-  state.rotation = (state.rotation + 90) % 360;
-  modalImg.style.transform = `rotate(${state.rotation}deg)`;
-  editStates[currentImgUrl] = state;
-};
-
-// リセットボタン
-resetBtn.onclick = () => {
-  if(!currentImgUrl) return;
-  modalImg.style.transform = 'rotate(0deg)';
-  modalImg.style.clipPath = 'none';
-  editStates[currentImgUrl] = {rotation:0, clip:'none'};
-};
-
-// トリミング開始
-startCropBtn.onclick = () => {
-  cropping = true;
-  cropStart = null;
-  cropRect = document.createElement('div');
-  cropRect.style.position = 'absolute';
-  cropRect.style.border = '2px dashed #fff';
-  cropRect.style.pointerEvents = 'none';
-  modal.appendChild(cropRect);
-  endCropBtn.style.display='inline-block';
-  startCropBtn.style.display='none';
-};
-
-// トリミング完了
-endCropBtn.onclick = () => {
-  if(!currentImgUrl) return;
-  if(cropStart && cropRect){
-    // clip-pathに変換（百分率）
-    const rect = cropRect.getBoundingClientRect();
-    const imgRect = modalImg.getBoundingClientRect();
-    const top = ((rect.top - imgRect.top)/imgRect.height)*100;
-    const left = ((rect.left - imgRect.left)/imgRect.width)*100;
-    const bottom = 100 - ((rect.bottom - imgRect.top)/imgRect.height)*100;
-    const right = 100 - ((rect.right - imgRect.left)/imgRect.width)*100;
-    const clipValue = `inset(${top}% ${right}% ${bottom}% ${left}%)`;
-
-    modalImg.style.clipPath = clipValue;
-    let state = editStates[currentImgUrl] || {rotation:0, clip:'none'};
-    state.clip = clipValue;
-    editStates[currentImgUrl] = state;
-  }
-  cropping = false;
-  cropStart = null;
-  cropRect.remove();
-  cropRect = null;
-  endCropBtn.style.display='none';
-  startCropBtn.style.display='inline-block';
-};
-
-// マウスでドラッグしてトリミング範囲を作成
-modalImg.addEventListener('mousedown', e => {
-  if(!cropping) return;
-  cropStart = {x:e.clientX, y:e.clientY};
-  cropRect.style.left = `${cropStart.x}px`;
-  cropRect.style.top = `${cropStart.y}px`;
-  cropRect.style.width = '0px';
-  cropRect.style.height = '0px';
-});
-
-modalImg.addEventListener('mousemove', e => {
-  if(!cropping || !cropStart) return;
-  const x = Math.min(e.clientX, cropStart.x);
-  const y = Math.min(e.clientY, cropStart.y);
-  const w = Math.abs(e.clientX - cropStart.x);
-  const h = Math.abs(e.clientY - cropStart.y);
-  cropRect.style.left = `${x}px`;
-  cropRect.style.top = `${y}px`;
-  cropRect.style.width = `${w}px`;
-  cropRect.style.height = `${h}px`;
-});
-
-modalImg.addEventListener('mouseup', e => {
-  if(!cropping) return;
-  // ドラッグ終了
-});
-</script>
-<script>
-// ギャラリーの画像クリック時に状態を復元する処理を追加
-async function restoreGalleryClickState() {
-  const wrappers = document.querySelectorAll('#gallery .photo-wrapper img');
-  wrappers.forEach(img => {
-    const url = img.src;
-    img.onclick = () => {
-      setCurrentImage(url);        // 状態を復元
-      modal.style.display = 'flex'; 
-      modalImg.src = url;
-    };
+// ギャラリークリック時に状態復元
+function restoreGalleryClickState(){
+  document.querySelectorAll('#gallery .photo-wrapper img').forEach(img=>{
+    const url=img.src;
+    img.onclick=()=>{ setCurrentImage(url); modal.style.display='flex'; };
   });
 }
-
-// ギャラリー更新時にクリックイベントを復元
-const observer = new MutationObserver(restoreGalleryClickState);
-observer.observe(document.getElementById('gallery'), { childList: true });
-
-// モーダル閉じるときに currentImgUrl をクリア
-modal.addEventListener('click', e => {
-  if (e.target === modal) {
-    modal.style.display = 'none';
-    toolbar.style.display = 'none';
-    currentImgUrl = null;
-  }
-});
+new MutationObserver(restoreGalleryClickState).observe(document.getElementById('gallery'),{ childList:true });
 </script>
+</body>
 </html>
