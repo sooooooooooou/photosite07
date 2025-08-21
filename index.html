@@ -7,155 +7,469 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background:#000;
-  color:#fff;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
+
+/* ヘッダー */
 header {
-  position:fixed;
-  top:0; left:0; right:0;
-  height:70px;
-  background:#111;
-  display:flex; justify-content:space-between; align-items:center;
-  padding:0 30px;
-  box-shadow:0 2px 10px rgba(255,255,255,0.1);
-  z-index:100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(17, 17, 17, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
-header h1 { margin:0; font-size:1.7em; font-weight:600; }
-header .auth-buttons button {
-  margin-left:10px;
-  padding:8px 16px;
-  border:none; border-radius:25px;
-  cursor:pointer; font-weight:600;
-  background:#444; color:#fff;
-  transition:0.3s;
-}
-header .auth-buttons button:hover {
-  transform:scale(1.05);
-  box-shadow:0 4px 12px rgba(255,255,255,0.2);
-}
-header .auth-buttons button.google { background:#DB4437; }
 
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #ffffff, #cccccc, #ffffff);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.auth-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-buttons button:not(.google) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.auth-buttons button:not(.google):hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+}
+
+.auth-buttons button.google {
+  background: linear-gradient(135deg, #333333, #000000);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.auth-buttons button.google:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+/* メインコンテンツ */
 #main {
-  margin-top:90px;
-  padding:20px;
-  max-width:1000px;
-  margin-left:auto; margin-right:auto;
+  margin-top: 100px;
+  padding: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+/* ドロップエリア */
 #drop-area {
-  width:100%; min-height:160px;
-  border:2px dashed #666;
-  border-radius:12px;
-  display:flex; justify-content:center; align-items:center;
-  font-size:1.2em;
-  background:#111;
-  cursor:pointer;
-  margin-bottom:15px;
-  transition:0.3s;
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+
+#drop-area::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ffffff, #999999, #ffffff, #cccccc);
+  background-size: 300% 300%;
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: gradientBorder 4s ease infinite;
+}
+
+@keyframes gradientBorder {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+#drop-area:hover::before {
+  opacity: 1;
+}
+
 #drop-area:hover {
-  border-color:#fff;
-  box-shadow:0 0 10px rgba(255,255,255,0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+  border-color: transparent;
 }
-#info { margin-bottom:20px; font-size:0.95em; color:#ccc; }
 
+/* 情報表示エリア */
+#info {
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+#info > div {
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  color: #b0b0b0;
+  transition: all 0.3s ease;
+}
+
+#info > div:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ギャラリーコントロール */
 #gallery-controls {
-  margin-bottom:20px;
-  display:flex;
-  gap:10px;
-}
-#bulk-open-btn {
-  padding:10px 20px;
-  background:#0066cc;
-  color:#fff;
-  border:none;
-  border-radius:25px;
-  cursor:pointer;
-  font-weight:600;
-  transition:0.3s;
-  display:none;
-}
-#bulk-open-btn:hover {
-  transform:scale(1.05);
-  box-shadow:0 4px 12px rgba(0,102,204,0.4);
-}
-/* Photopea追加ボタン */
-#edit-with-photopea-btn {
-  padding:10px 20px;
-  background:#00cc66;
-  color:#fff;
-  border:none;
-  border-radius:25px;
-  cursor:pointer;
-  font-weight:600;
-  transition:0.3s;
-  display:none;
-}
-#edit-with-photopea-btn:hover {
-  transform:scale(1.05);
-  box-shadow:0 4px 12px rgba(0,204,102,0.4);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
+#gallery-controls button {
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: none;
+}
+
+#bulk-open-btn {
+  background: linear-gradient(135deg, #666666, #333333);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+#bulk-open-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+#edit-with-photopea-btn {
+  background: linear-gradient(135deg, #ffffff, #cccccc);
+  color: #000000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#edit-with-photopea-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ギャラリー */
 #gallery {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 2rem;
 }
-#gallery .photo-wrapper { position:relative; }
-#gallery img {
-  width:100%;
-  display:block;
-  border-radius:12px;
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor:pointer;
+
+.photo-wrapper {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
-#gallery img:hover {
-  transform: scale(1.03);
-  box-shadow:0 0 15px rgba(255,255,255,0.3);
+
+.photo-wrapper:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
+
+.photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.photo-wrapper:hover img {
+  filter: brightness(1.1);
+}
+
 .delete-btn {
-  position:absolute; top:8px; right:8px;
-  background:rgba(255,0,0,0.8);
-  border:none; border-radius:50%;
-  width:25px; height:25px; color:white;
-  font-weight:bold; cursor:pointer;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0;
 }
+
+.photo-wrapper:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #000000;
+  transform: scale(1.1);
+}
+
+/* モーダル */
 #auth-modal {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.8);
-  justify-content:center; align-items:center;
-  z-index:200;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
+
+#auth-modal.show {
+  opacity: 1;
+}
+
 #auth-modal .modal-content {
-  background:#222; color:#fff;
-  padding:30px; border-radius:16px;
-  width:320px; text-align:center;
+  background: rgba(34, 34, 34, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 2.5rem;
+  border-radius: 25px;
+  width: 380px;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
 }
+
+#auth-modal.show .modal-content {
+  transform: translateY(0);
+}
+
+#auth-modal h2 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
 #auth-modal input {
-  width:100%; margin-bottom:12px; padding:10px;
-  border:1px solid #555; border-radius:8px;
-  background:#000; color:#fff;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
+
+#auth-modal input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
 #auth-modal button {
-  width:100%; padding:10px;
-  border:none; border-radius:25px;
-  background:#444; color:white;
-  font-weight:600; cursor:pointer;
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #ffffff, #cccccc);
+  color: #000000;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
+
+#auth-modal button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+#auth-modal a {
+  color: #b0b0b0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+#auth-modal a:hover {
+  color: #ffffff;
+}
+
+/* 画像モーダル */
 #modal-img {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.9);
-  justify-content:center; align-items:center;
-  z-index:300; cursor:pointer;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  cursor: pointer;
 }
+
 #modal-img img {
-  max-width:90%; max-height:90%;
-  border-radius:12px;
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  header {
+    padding: 0 1rem;
+    height: 70px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .auth-buttons {
+    gap: 0.5rem;
+  }
+  
+  .auth-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  #main {
+    margin-top: 90px;
+    padding: 1rem;
+  }
+  
+  #gallery {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  #info {
+    grid-template-columns: 1fr;
+  }
+  
+  #auth-modal .modal-content {
+    width: 90%;
+    max-width: 350px;
+    padding: 2rem;
+  }
+}
+
+/* アニメーション */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.photo-wrapper {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.photo-wrapper:nth-child(even) {
+  animation-delay: 0.1s;
+}
+
+.photo-wrapper:nth-child(3n) {
+  animation-delay: 0.2s;
 }
 </style>
 </head>
@@ -171,17 +485,17 @@ header .auth-buttons button.google { background:#DB4437; }
 </header>
 
 <div id="main">
-  <div id="drop-area">ここに画像をドラッグ＆ドロップ、またはクリック</div>
+  <div id="drop-area">📸 ここに画像をドラッグ＆ドロップ、またはクリック</div>
   <input type="file" id="fileElem" multiple style="display:none">
+  
   <div id="info">
-    <div id="upload-info">アップロード時間がここに表示されます</div>
-    <div id="storage-info">総ストレージ使用量がここに表示されます</div>
+    <div id="upload-info">⏱️ アップロード時間がここに表示されます</div>
+    <div id="storage-info">💾 総ストレージ使用量がここに表示されます</div>
   </div>
   
   <div id="gallery-controls">
-    <button id="bulk-open-btn" onclick="openAllImagesInTabs()">全ての画像を新しいタブで開く</button>
-    <!-- Photopea修正 -->
-    <button id="edit-with-photopea-btn" onclick="openPhotopea()">Photopeaで編集</button>
+    <button id="bulk-open-btn" onclick="openAllImagesInTabs()">🚀 全ての画像を新しいタブで開く</button>
+    <button id="edit-with-photopea-btn" onclick="openPhotopea()">🎨 Photopeaで編集</button>
   </div>
   
   <div id="gallery"></div>
@@ -190,10 +504,10 @@ header .auth-buttons button.google { background:#DB4437; }
 <div id="auth-modal">
   <div class="modal-content">
     <h2 id="auth-title">ログイン</h2>
-    <input type="email" id="email" placeholder="メール">
-    <input type="password" id="password" placeholder="パスワード">
+    <input type="email" id="email" placeholder="📧 メールアドレス">
+    <input type="password" id="password" placeholder="🔒 パスワード">
     <button id="auth-submit">送信</button>
-    <a href="#" onclick="closeAuth()" style="color:#ccc;">閉じる</a>
+    <a href="#" onclick="closeAuth()">閉じる</a>
   </div>
 </div>
 
@@ -216,58 +530,68 @@ const uploadInfo = document.getElementById('upload-info');
 const storageInfo = document.getElementById('storage-info');
 const bulkOpenBtn = document.getElementById('bulk-open-btn');
 const photopeaBtn = document.getElementById('edit-with-photopea-btn');
+const authModal = document.getElementById('auth-modal');
 
 // 現在のフォトURLsを保存する配列
 let currentPhotoUrls = [];
 
 function showLogin(){
-  document.getElementById('auth-modal').style.display='flex';
+  authModal.style.display='flex';
+  setTimeout(() => authModal.classList.add('show'), 10);
   document.getElementById('auth-title').innerText='ログイン';
   document.getElementById('auth-submit').onclick=login;
 }
+
 function showSignup(){
-  document.getElementById('auth-modal').style.display='flex';
+  authModal.style.display='flex';
+  setTimeout(() => authModal.classList.add('show'), 10);
   document.getElementById('auth-title').innerText='新規登録';
   document.getElementById('auth-submit').onclick=signup;
 }
+
 function closeAuth(){
-  document.getElementById('auth-modal').style.display='none';
+  authModal.classList.remove('show');
+  setTimeout(() => authModal.style.display='none', 300);
 }
+
 function signup(){
   const email = document.getElementById('email').value;
   const pw = document.getElementById('password').value;
   auth.createUserWithEmailAndPassword(email, pw)
-    .then(()=>{ alert('登録成功'); closeAuth(); })
-    .catch(e=>alert(e.message));
+    .then(()=>{ alert('🎉 登録成功'); closeAuth(); })
+    .catch(e=>alert('❌ ' + e.message));
 }
+
 function login(){
   const email = document.getElementById('email').value;
   const pw = document.getElementById('password').value;
   auth.signInWithEmailAndPassword(email, pw)
-    .then(()=>{ alert('ログイン成功'); closeAuth(); })
-    .catch(e=>alert(e.message));
+    .then(()=>{ alert('✅ ログイン成功'); closeAuth(); })
+    .catch(e=>alert('❌ ' + e.message));
 }
+
 function loginWithGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
-    .then(r=>{ alert('Googleログイン成功: '+r.user.email); })
-    .catch(e=>alert('Googleログインエラー: '+e.message));
+    .then(r=>{ alert('🎉 Googleログイン成功: '+r.user.email); })
+    .catch(e=>alert('❌ Googleログインエラー: '+e.message));
 }
+
 function logout(){ auth.signOut(); }
 
 const cloudName = "dqud9tdr8";
 const uploadPreset = "annkomoti";
 
 dropArea.addEventListener('click',()=>fileElem.click());
-dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.style.borderColor='#fff'; });
-dropArea.addEventListener('dragleave', e=>{ e.preventDefault(); dropArea.style.borderColor='#666'; });
-dropArea.addEventListener('drop', e=>{ e.preventDefault(); dropArea.style.borderColor='#666'; handleFiles(e.dataTransfer.files); });
+dropArea.addEventListener('dragover', e=>{ e.preventDefault(); });
+dropArea.addEventListener('dragleave', e=>{ e.preventDefault(); });
+dropArea.addEventListener('drop', e=>{ e.preventDefault(); handleFiles(e.dataTransfer.files); });
 fileElem.addEventListener('change', e=>handleFiles(e.target.files));
 
 async function handleFiles(files){
   if(!files.length) return;
   const user = auth.currentUser;
-  if(!user){ alert('ログインしてください'); return; }
+  if(!user){ alert('🔐 ログインしてください'); return; }
 
   for(let file of files){
     const start = performance.now();
@@ -282,7 +606,7 @@ async function handleFiles(files){
       const end = performance.now();
       const uploadTime = ((end-start)/1000).toFixed(2);
 
-      uploadInfo.innerText = `アップロード完了: ${file.name} (${uploadTime}秒)`;
+      uploadInfo.innerText = `✅ アップロード完了: ${file.name} (${uploadTime}秒)`;
 
       await db.collection('users').doc(user.uid).collection('photos').add({
         url: data.secure_url,
@@ -290,19 +614,18 @@ async function handleFiles(files){
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       displayGallery();
-    }catch(err){ alert('アップロードエラー: '+err.message); }
+    }catch(err){ alert('❌ アップロードエラー: '+err.message); }
   }
 }
 
-// 全ての画像を新しいタブで開く機能
 function openAllImagesInTabs(){
   if(currentPhotoUrls.length === 0){
-    alert('開く画像がありません');
+    alert('📷 開く画像がありません');
     return;
   }
   
   if(currentPhotoUrls.length > 10){
-    if(!confirm(`${currentPhotoUrls.length}枚の画像を新しいタブで開きます。よろしいですか？`)){
+    if(!confirm(`🚀 ${currentPhotoUrls.length}枚の画像を新しいタブで開きます。よろしいですか？`)){
       return;
     }
   }
@@ -314,7 +637,6 @@ function openAllImagesInTabs(){
   });
 }
 
-// Photopeaで編集（修正版：1回だけ開く）
 function openPhotopea() {
   window.open('https://www.photopea.com/', '_blank');
 }
@@ -353,7 +675,7 @@ async function displayGallery(){
     delBtn.className='delete-btn';
     delBtn.onclick = async (e)=>{
       e.stopPropagation();
-      if(!confirm('本当に削除しますか？')) return;
+      if(!confirm('🗑️ 本当に削除しますか？')) return;
       await db.collection('users').doc(user.uid).collection('photos').doc(doc.id).delete();
       displayGallery();
     };
@@ -363,7 +685,7 @@ async function displayGallery(){
     gallery.appendChild(wrapper);
   });
 
-  storageInfo.innerText = `総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
+  storageInfo.innerText = `💾 総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
 
   bulkOpenBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
   photopeaBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
@@ -372,7 +694,7 @@ async function displayGallery(){
 auth.onAuthStateChanged(user=>{
   const authDiv = document.getElementById('auth-buttons');
   if(user){
-    authDiv.innerHTML = `${user.email} <button onclick="logout()">ログアウト</button>`;
+    authDiv.innerHTML = `👤 ${user.email} <button onclick="logout()">ログアウト</button>`;
     displayGallery();
   }else{
     authDiv.innerHTML = `<button onclick="showLogin()">ログイン</button><button onclick="showSignup()">新規登録</button><button class="google" onclick="loginWithGoogle()">Google</button>`;
@@ -380,8 +702,20 @@ auth.onAuthStateChanged(user=>{
     currentPhotoUrls = [];
     bulkOpenBtn.style.display = 'none';
     photopeaBtn.style.display = 'none';
-    uploadInfo.innerText = 'アップロード時間がここに表示されます';
-    storageInfo.innerText = '総ストレージ使用量がここに表示されます';
+    uploadInfo.innerText = '⏱️ アップロード時間がここに表示されます';
+    storageInfo.innerText = '💾 総ストレージ使用量がここに表示されます';
+  }
+});
+
+// ESCキーでモーダルを閉じる
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (authModal.style.display === 'flex') {
+      closeAuth();
+    }
+    if (document.getElementById('modal-img').style.display === 'flex') {
+      document.getElementById('modal-img').style.display = 'none';
+    }
   }
 });
 </script>
