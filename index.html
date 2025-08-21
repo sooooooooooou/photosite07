@@ -83,6 +83,22 @@ header .auth-buttons button.google { background:#DB4437; }
   transform:scale(1.05);
   box-shadow:0 4px 12px rgba(0,102,204,0.4);
 }
+/* Photopea追加ボタン */
+#edit-with-photopea-btn {
+  padding:10px 20px;
+  background:#00cc66;
+  color:#fff;
+  border:none;
+  border-radius:25px;
+  cursor:pointer;
+  font-weight:600;
+  transition:0.3s;
+  display:none;
+}
+#edit-with-photopea-btn:hover {
+  transform:scale(1.05);
+  box-shadow:0 4px 12px rgba(0,204,102,0.4);
+}
 
 #gallery {
   display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -164,6 +180,8 @@ header .auth-buttons button.google { background:#DB4437; }
   
   <div id="gallery-controls">
     <button id="bulk-open-btn" onclick="openAllImagesInTabs()">全ての画像を新しいタブで開く</button>
+    <!-- Photopea追加 -->
+    <button id="edit-with-photopea-btn" onclick="openAllInPhotopea()">Photopeaで編集</button>
   </div>
   
   <div id="gallery"></div>
@@ -197,6 +215,7 @@ const gallery = document.getElementById('gallery');
 const uploadInfo = document.getElementById('upload-info');
 const storageInfo = document.getElementById('storage-info');
 const bulkOpenBtn = document.getElementById('bulk-open-btn');
+const photopeaBtn = document.getElementById('edit-with-photopea-btn');
 
 // 現在のフォトURLsを保存する配列
 let currentPhotoUrls = [];
@@ -282,27 +301,41 @@ function openAllImagesInTabs(){
     return;
   }
   
-  // ブラウザがポップアップをブロックしないように確認
   if(currentPhotoUrls.length > 10){
     if(!confirm(`${currentPhotoUrls.length}枚の画像を新しいタブで開きます。よろしいですか？`)){
       return;
     }
   }
 
-  // 各画像を新しいタブで開く（少し遅延を入れてブラウザの負荷を軽減）
   currentPhotoUrls.forEach((url, index) => {
     setTimeout(() => {
       window.open(url, '_blank');
-    }, index * 100); // 100ms間隔で開く
+    }, index * 100);
+  });
+}
+
+// Photopeaで編集
+function openAllInPhotopea() {
+  if(currentPhotoUrls.length === 0){
+      alert('編集する画像がありません');
+      return;
+  }
+
+  currentPhotoUrls.forEach((url, index) => {
+      setTimeout(() => {
+          const photopeaURL = `https://www.photopea.com#${encodeURIComponent(url)}`;
+          window.open(photopeaURL, '_blank');
+      }, index * 200);
   });
 }
 
 async function displayGallery(){
   gallery.innerHTML = '';
-  currentPhotoUrls = []; // URLリストをリセット
+  currentPhotoUrls = [];
   const user = auth.currentUser;
   if(!user) {
     bulkOpenBtn.style.display = 'none';
+    photopeaBtn.style.display = 'none';
     return;
   }
   
@@ -313,7 +346,6 @@ async function displayGallery(){
     const data = doc.data();
     totalSize += data.size ? data.size : 0;
     
-    // URLを配列に追加
     currentPhotoUrls.push(data.url);
 
     const wrapper = document.createElement('div');
@@ -342,9 +374,9 @@ async function displayGallery(){
   });
 
   storageInfo.innerText = `総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
-  
-  // 画像がある場合のみ一括表示ボタンを表示
+
   bulkOpenBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
+  photopeaBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
 }
 
 auth.onAuthStateChanged(user=>{
@@ -357,11 +389,11 @@ auth.onAuthStateChanged(user=>{
     gallery.innerHTML = '';
     currentPhotoUrls = [];
     bulkOpenBtn.style.display = 'none';
+    photopeaBtn.style.display = 'none';
     uploadInfo.innerText = 'アップロード時間がここに表示されます';
     storageInfo.innerText = '総ストレージ使用量がここに表示されます';
   }
 });
 </script>
 </body>
-
 </html>
