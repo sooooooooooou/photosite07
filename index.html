@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Photos</title>
+<title>Photos</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -494,8 +494,8 @@ header h1 {
   </div>
   
   <div id="gallery-controls">
-    <button id="bulk-open-btn" onclick="openAllImagesInTabs()">🚀 全ての画像を新しいタブで開く</button>
-    <button id="edit-with-photopea-btn" onclick="openPhotopea()">🎨 Photopeaで編集</button>
+    <button id="bulk-open-btn" onclick="openAllImagesInTabs()">全ての画像を新しいタブで開く</button>
+    <button id="edit-with-photopea-btn" onclick="openPhotopea()">Photopeaで編集</button>
   </div>
   
   <div id="gallery"></div>
@@ -504,8 +504,8 @@ header h1 {
 <div id="auth-modal">
   <div class="modal-content">
     <h2 id="auth-title">ログイン</h2>
-    <input type="email" id="email" placeholder="📧 メールアドレス">
-    <input type="password" id="password" placeholder="🔒 パスワード">
+    <input type="email" id="email" placeholder="メールアドレス">
+    <input type="password" id="password" placeholder="パスワード">
     <button id="auth-submit">送信</button>
     <a href="#" onclick="closeAuth()">閉じる</a>
   </div>
@@ -573,8 +573,8 @@ function login(){
 function loginWithGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
-    .then(r=>{ alert('🎉 Googleログイン成功: '+r.user.email); })
-    .catch(e=>alert('❌ Googleログインエラー: '+e.message));
+    .then(r=>{ alert(' Googleログイン成功: '+r.user.email); })
+    .catch(e=>alert(' Googleログインエラー: '+e.message));
 }
 
 function logout(){ auth.signOut(); }
@@ -685,7 +685,7 @@ async function displayGallery(){
     gallery.appendChild(wrapper);
   });
 
-  storageInfo.innerText = `💾 総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
+  storageInfo.innerText = ` 総ストレージ使用量: ${(totalSize/1024/1024).toFixed(2)} MB`;
 
   bulkOpenBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
   photopeaBtn.style.display = currentPhotoUrls.length > 0 ? 'block' : 'none';
@@ -702,8 +702,8 @@ auth.onAuthStateChanged(user=>{
     currentPhotoUrls = [];
     bulkOpenBtn.style.display = 'none';
     photopeaBtn.style.display = 'none';
-    uploadInfo.innerText = '⏱️ アップロード時間がここに表示されます';
-    storageInfo.innerText = '💾 総ストレージ使用量がここに表示されます';
+    uploadInfo.innerText = '⏱ アップロード時間がここに表示されます';
+    storageInfo.innerText = ' 総ストレージ使用量がここに表示されます';
   }
 });
 
