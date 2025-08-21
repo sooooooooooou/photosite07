@@ -363,4 +363,166 @@ auth.onAuthStateChanged(user=>{
 });
 </script>
 </body>
+<!-- 編集用ツールバー -->
+<div id="edit-toolbar" style="display:none; position:fixed; top:20px; right:20px; z-index:400; background:rgba(0,0,0,0.7); padding:10px; border-radius:12px; display:flex; gap:10px;">
+  <button id="rotate-left" style="padding:5px 10px;">⟲</button>
+  <button id="rotate-right" style="padding:5px 10px;">⟳</button>
+  <button id="reset-edit" style="padding:5px 10px;">リセット</button>
+  <button id="start-crop" style="padding:5px 10px;">トリミング</button>
+  <button id="end-crop" style="padding:5px 10px; display:none;">完了</button>
+</div>
+
+<script>
+const editStates = {}; // 画像ごとの状態保持
+let cropping = false;
+let cropStart = null;
+let cropRect = null;
+
+const modalImg = document.getElementById('modal-img-inner');
+const modal = document.getElementById('modal-img');
+const toolbar = document.getElementById('edit-toolbar');
+const rotateLeftBtn = document.getElementById('rotate-left');
+const rotateRightBtn = document.getElementById('rotate-right');
+const resetBtn = document.getElementById('reset-edit');
+const startCropBtn = document.getElementById('start-crop');
+const endCropBtn = document.getElementById('end-crop');
+
+let currentImgUrl = null;
+
+// モーダル表示時に編集ツールを表示
+modal.addEventListener('click', e => {
+  if(e.target === modal){
+    modal.style.display='none';
+    toolbar.style.display='none';
+  }
+});
+
+// 画像クリックで現在のURLを取得
+function setCurrentImage(url){
+  currentImgUrl = url;
+  toolbar.style.display='flex';
+
+  // 既存状態を復元
+  const state = editStates[url] || {rotation:0, clip:'none'};
+  modalImg.style.transform = `rotate(${state.rotation}deg)`;
+  modalImg.style.clipPath = state.clip;
+}
+
+// 回転ボタン
+rotateLeftBtn.onclick = () => {
+  if(!currentImgUrl) return;
+  let state = editStates[currentImgUrl] || {rotation:0, clip:'none'};
+  state.rotation = (state.rotation - 90 + 360) % 360;
+  modalImg.style.transform = `rotate(${state.rotation}deg)`;
+  editStates[currentImgUrl] = state;
+};
+rotateRightBtn.onclick = () => {
+  if(!currentImgUrl) return;
+  let state = editStates[currentImgUrl] || {rotation:0, clip:'none'};
+  state.rotation = (state.rotation + 90) % 360;
+  modalImg.style.transform = `rotate(${state.rotation}deg)`;
+  editStates[currentImgUrl] = state;
+};
+
+// リセットボタン
+resetBtn.onclick = () => {
+  if(!currentImgUrl) return;
+  modalImg.style.transform = 'rotate(0deg)';
+  modalImg.style.clipPath = 'none';
+  editStates[currentImgUrl] = {rotation:0, clip:'none'};
+};
+
+// トリミング開始
+startCropBtn.onclick = () => {
+  cropping = true;
+  cropStart = null;
+  cropRect = document.createElement('div');
+  cropRect.style.position = 'absolute';
+  cropRect.style.border = '2px dashed #fff';
+  cropRect.style.pointerEvents = 'none';
+  modal.appendChild(cropRect);
+  endCropBtn.style.display='inline-block';
+  startCropBtn.style.display='none';
+};
+
+// トリミング完了
+endCropBtn.onclick = () => {
+  if(!currentImgUrl) return;
+  if(cropStart && cropRect){
+    // clip-pathに変換（百分率）
+    const rect = cropRect.getBoundingClientRect();
+    const imgRect = modalImg.getBoundingClientRect();
+    const top = ((rect.top - imgRect.top)/imgRect.height)*100;
+    const left = ((rect.left - imgRect.left)/imgRect.width)*100;
+    const bottom = 100 - ((rect.bottom - imgRect.top)/imgRect.height)*100;
+    const right = 100 - ((rect.right - imgRect.left)/imgRect.width)*100;
+    const clipValue = `inset(${top}% ${right}% ${bottom}% ${left}%)`;
+
+    modalImg.style.clipPath = clipValue;
+    let state = editStates[currentImgUrl] || {rotation:0, clip:'none'};
+    state.clip = clipValue;
+    editStates[currentImgUrl] = state;
+  }
+  cropping = false;
+  cropStart = null;
+  cropRect.remove();
+  cropRect = null;
+  endCropBtn.style.display='none';
+  startCropBtn.style.display='inline-block';
+};
+
+// マウスでドラッグしてトリミング範囲を作成
+modalImg.addEventListener('mousedown', e => {
+  if(!cropping) return;
+  cropStart = {x:e.clientX, y:e.clientY};
+  cropRect.style.left = `${cropStart.x}px`;
+  cropRect.style.top = `${cropStart.y}px`;
+  cropRect.style.width = '0px';
+  cropRect.style.height = '0px';
+});
+
+modalImg.addEventListener('mousemove', e => {
+  if(!cropping || !cropStart) return;
+  const x = Math.min(e.clientX, cropStart.x);
+  const y = Math.min(e.clientY, cropStart.y);
+  const w = Math.abs(e.clientX - cropStart.x);
+  const h = Math.abs(e.clientY - cropStart.y);
+  cropRect.style.left = `${x}px`;
+  cropRect.style.top = `${y}px`;
+  cropRect.style.width = `${w}px`;
+  cropRect.style.height = `${h}px`;
+});
+
+modalImg.addEventListener('mouseup', e => {
+  if(!cropping) return;
+  // ドラッグ終了
+});
+</script>
+<script>
+// ギャラリーの画像クリック時に状態を復元する処理を追加
+async function restoreGalleryClickState() {
+  const wrappers = document.querySelectorAll('#gallery .photo-wrapper img');
+  wrappers.forEach(img => {
+    const url = img.src;
+    img.onclick = () => {
+      setCurrentImage(url);        // 状態を復元
+      modal.style.display = 'flex'; 
+      modalImg.src = url;
+    };
+  });
+}
+
+// ギャラリー更新時にクリックイベントを復元
+const observer = new MutationObserver(restoreGalleryClickState);
+observer.observe(document.getElementById('gallery'), { childList: true });
+
+// モーダル閉じるときに currentImgUrl をクリア
+modal.addEventListener('click', e => {
+  if (e.target === modal) {
+    modal.style.display = 'none';
+    toolbar.style.display = 'none';
+    currentImgUrl = null;
+  }
+});
+</script>
 </html>
